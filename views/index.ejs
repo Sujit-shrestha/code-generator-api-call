@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Generator</title>
+  <style> 
+  
+  body {
+  background-color: #f1f1f1;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+form {
+  text-align: center;
+}
+
+textarea {
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:last-child {
+  margin-right: 0;
+}</style>
+  
+</head>
+<body>
+  <form onsubmit="return false;">
+    <textarea type="text"  id="inputBox" name="inputBox" placeholder="Type your prompt here..."></textarea>
+    <textarea type="text"  id="outputBox" name="outputBox" placeholder="Your code will be here..."></textarea>
+
+    <br>
+    <button  onclick=" getInput()">GENERATE</button>
+    <button onclick="clearIt()">CLEAR</button>
+   
+  </form>
+
+  <script>
+
+    function getInput() {
+    let inputText = document.getElementById("inputBox").value;
+    fetch('/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ instruction: inputText }),
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.text();
+          } else {
+            console.log('Failed to send POST request');
+          }
+        })
+        .then(responseBody => {
+        
+          if(responseBody !=undefined){
+            const parsedResponse = JSON.parse(responseBody);
+            console.log(parsedResponse['code']);
+            //  console.log(JSON.stringify(responseBody));
+          const output = document.getElementById("outputBox");
+          output.value = parsedResponse['code'];
+          }
+          
+        
+          
+        
+          
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      
+    }
+    
+    function clearIt(){
+    document.getElementById("inputBox").value="";
+
+    }
+  
+   </script>
+   
+ 
+
+</body>
+</html>
